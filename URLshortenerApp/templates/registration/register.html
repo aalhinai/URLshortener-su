@@ -1,0 +1,35 @@
+<!-- register.html -->
+{% extends "base.html" %}
+{% block title %}User Registration{% endblock %}
+{% block head %}{% endblock %}
+{% block content %}
+<section class="cta">
+    <div class="cta-content">
+        <div class="container" style="margin-bottom: 380px">
+            <h2>Stop waiting.<br>Start building.</h2>
+            <div class="inner-box-container" style="max-height: 600px ; height: Auto ">
+                <div class="box" >
+                <h1>User Registration</h1>
+    <form method="post" action=".">{% csrf_token %}
+        <!--<table border="0">-->
+            {% for field in form.visible_fields %}
+               <div>{{ field }}</div>
+               <div style="color: red">{{ field.errors }}</div>
+            {% endfor %}
+
+            <!--{{ form.as_table }}-->
+        <!--</table>-->
+        <div align = "center">
+        <button type="submit" value="Register" class="btn btn-outline btn-xl page-scroll" style="background-color: transparent;">Register</button>
+        <button type="button" class="btn btn-outline btn-xl page-scroll" style="background-color: transparent;" onclick="window.location.href='/' ">Login</button>
+        </div>
+    </form>
+    </div>
+  </div>
+ </div>
+</div>
+    
+<div class="overlay"></div>
+</section>
+
+{% endblock %}

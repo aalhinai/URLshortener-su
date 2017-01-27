@@ -1,0 +1,146 @@
+<!-- home.html -->
+
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% block title %}Welcome to SUPERCOACH URL Shortner{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />{% endblock %}
+{% block content %}
+
+
+<section class="cta">
+    <h2> Welcome {{ user.username.upper }} ! </h2>
+    <div class="cta-content">
+        <div class="container" >
+            {% block messages %}
+              {% for message in messages %}
+                {% if 'success' in message.tags %}
+                 <script>
+                    window.onload = function() {custumMessage('{{ message }}');};
+                 </script>
+               {% endif %}
+              {% endfor %}
+             {% endblock %}
+            
+        <form class="form" id="list_data" method="post" action="">{% csrf_token %}
+                  
+            <div align = "center"> {% render_table data %}</div>
+                   
+                    
+                <div class="box" id="newURLbox" style="display: none" >
+                            
+                    <input type="text" name="newUrl" id="newUrl"  placeholder="Insert the URL that you need to short it" style="width: 350px; display: inline-block; margin: 0 8px">
+                    <input type="text" name="newUrlDesc" id="newUrlDesc"  placeholder="Insert the URL description" style="width: 350px; display: inline-block"><br>
+                            
+                </div>
+                    
+                <div align = "center">
+                  <button type="submit" id="URLShortner" value="URLShortner" class="btn btn-outline btn-xl page-scroll" style="background-color: transparent; display: none" onclick="proceed_shortner()">Generate URL Shortner</button>
+                  <button type="button" id="URLShortnerShow" value="URLShortnerShow" class="btn btn-outline btn-xl page-scroll" style="background-color: transparent;" onclick="show()">Shortner New URL</button>
+                  <button type="submit" id="DeleteRec" value="DeleteRec" class="btn btn-outline btn-xl page-scroll" style="background-color: transparent;" onclick="proceed_del()">Delete Records</button>
+                  <a><button type="button" class="btn btn-outline btn-xl page-scroll" style="background-color: transparent;" onclick="window.location.href='/logout/' ">Logout</button></a>
+                </div>
+                    
+         </form>       
+                   
+                 
+            {% block javascript %}
+                 
+            <script type = "text/javascript">
+                function proceed_del() {
+                         form = document.getElementById('list_data');
+                         var checklist = document.getElementsByName('selection');
+                         var checklist_count = 0;
+                         
+                         for (var i = 0; i < checklist.length; i++)
+                         {
+                             if(checklist[i].checked)
+                             {
+                                 checklist_count += 1;
+                             }
+                         }
+                         
+                         if (checklist_count != 0){
+                             var user_choice = window.confirm('Are you sure you want to delete the selected '+ checklist_count + ' record(s)?');
+                                 if (user_choice == true){
+                                    form.setAttribute('action', "/delete/");
+                                    form.submit();
+                                 }else {
+                                  return false;
+                                }
+                          }else {
+                           document.getElementById("DeleteRec").type = "button";
+                           return alert("You have to select which record to be delete");
+                           
+                        }
+                         
+                        
+                    }
+                                                              
+                                                              
+                 
+                 function proceed_shortner() {
+                     form = document.getElementById('list_data');
+                     var userURL_input = document.getElementById('newUrl').value;
+                     var userURLde_input = document.getElementById('newUrlDesc').value;
+                     if( userURL_input != "" && userURLde_input != "")
+                     { form.setAttribute('action', "/URLShortner/");
+                       form.submit();
+                     }else{
+                         alert("Please insert both the URL & Description ");
+                         document.getElementById("URLShortner").type = "button";
+                         return document.getElementById("URLShortnerShow").click();
+
+                     }
+                 }
+                 
+                 function show(){
+                  
+                   document.getElementById("newURLbox").style.display = "block";
+                   document.getElementById("URLShortnerShow").style.display = "none";
+                   document.getElementById("URLShortner").style.display = "inline";
+                   
+                 
+                 
+                 }
+                 
+                 function toggle(source) {
+                     checkboxes = document.getElementsByName('selection');
+                     for(var i in checkboxes)
+                     checkboxes[i].checked = source.checked;
+                 }
+                 
+                 
+                 
+
+               function custumMessage(msg){
+                 if (window.webkitNotifications) {
+                   if (window.webkitNotifications.checkPermission() == 0) {
+                       notification = window.webkitNotifications.createNotification(
+                                                                         'superCoach.png', 'Super Coach Notification', msg);
+                                                                          notification.onshow = function() { // when message shows up
+                                                                             setTimeout(function() {
+                                                                                        notification.close();
+                                                                                        }, 3500); // close message after one second...
+                                                                         };
+                                                                         notification.show();
+                    } else {
+                      window.webkitNotifications.requestPermission(); // ask for permissions
+                    }
+                }
+                 else {
+                     alert(msg);// callback for people who does not have notification API; show alert box instead
+                }
+              }
+                 
+                 
+                 
+
+                 </script>
+                 {% endblock %}
+        </div>
+</section>
+
+{% endblock %}
+
+
